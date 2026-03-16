@@ -1,8 +1,17 @@
-
 import Mathlib.Algebra.CharP.Defs
 import Mathlib.Analysis.Normed.Ring.Lemmas
 
-theorem IMO2019P1 :
+
+theorem IMO2019P1Right :
+    ∀ (f : ℤ → ℤ),
+      (∀ x, f x = 0) ∨ (∃ c : ℤ, ∀ x, f x = 2 * x + c) →
+      (∀ a b : ℤ, f (2 * a) + 2 * f b = f (f (a + b))) := by
+      rintro f (hf | ⟨c, hc⟩)
+      . simp [hf]
+      . simp [hc]
+        lia
+
+theorem IMO2019P1Left :
     ∀ (f : ℤ → ℤ),
       (∀ a b : ℤ, f (2 * a) + 2 * f b = f (f (a + b))) →
       (∀ x, f x = 0) ∨ (∃ c : ℤ, ∀ x, f x = 2 * x + c) := by
@@ -146,4 +155,12 @@ theorem IMO2019P1 :
     use f0
     grind
 
+theorem IMO2019P1:
+    ∀ (f : ℤ → ℤ),
+      (∀ x, f x = 0) ∨ (∃ c : ℤ, ∀ x, f x = 2 * x + c) ↔
+      (∀ a b : ℤ, f (2 * a) + 2 * f b = f (f (a + b))) := by
+      intro f
+      constructor
+      . exact fun a _ b => IMO2019P1Right f a _ b
+      . exact fun a => IMO2019P1Left f a
 -- #min_imports
