@@ -76,6 +76,24 @@ theorem usamo2023p2right : ∀f : (NNReal -> NNReal), (∀x, ∀y, (f (x * y + f
       intro x pos
       specialize condition₄ (f 1 / x) (by sorry)
       sorry
-    sorry
+    have condition₆: ∃a, ∃b, ∀ x > 1, f x = a * x + b := by sorry
+    obtain ⟨a, b, proof_ab⟩ := condition₆
+
+    specialize condition 2 2
+    have : 2 * 2 + (a * 2 + b) > 1 := by sorry
+
+    simp [proof_ab] at condition
+    have : f (2 * 2 + (a * 2 + b)) = a * (2 * 2 + (a * 2 + b)) + b := by grind
+
+    simp [this] at condition
+    have mp : a * (2 * a + b + 2) = (2 * a + b + 2) := by grind
+    have : (2 * a + b + 2) > 0 := by
+      simp
+    have : a = 1 := by grind
+    have : b = 1 := by sorry
+
+    have le_1_lemma : ∀y, (y <= 1) -> f y = y + 1 := by sorry
+    grind
+
 theorem usamo2023p2 : ∀f : (NNReal -> NNReal), (∀x, ∀y, (f (x * y + f (x)) = x * f (y) + 2)) ↔
   ∀ x, (f (x) = x + 1) := fun f => ⟨usamo2023p2right f, usamo2023p2left f⟩
