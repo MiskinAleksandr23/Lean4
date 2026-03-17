@@ -1,19 +1,19 @@
-import Mathlib.Algebra.CharP.Defs
 import Mathlib.Analysis.Normed.Ring.Lemmas
 
 
-theorem EqualAllByConsequent :
-  ∀ (f : ℤ -> ℤ),
-  (∀b : ℤ, f (b + 1) - f b = 0)
+-- IMO 2019 P1
+-- Let ℤ be the set of integers. Determine all functions f : ℤ -> ℤ such that, for all integers a and b, f(2a)+2f(b)=f(f(a+b))
+
+theorem ArithProgressionDifference :
+  ∀ (f : ℤ -> ℤ), ∀ c : ℤ,
+  (∀b : ℤ, f (b + 1) - f b = c)
   ->
-  ∀m, ∀n, f n = f m := by
-    intro f equal_consequent
-    have all_equal_lemma : ∀m : ℤ, ∀ xd : ℕ, f (m + xd) == f m := by
+  ∀m, ∀n, f n - f m = (n - m) * c := by
+    intro f c equal_consequent
+    have all_equal_lemma : ∀m : ℤ, ∀ xd : ℕ, f (m + xd) == f m + c * xd := by
         intro m xd
         induction xd with
-          | zero => grind
-          | succ m =>
-            grind
+          | _ => grind
     intro n m
     if n >= m then
       specialize all_equal_lemma m (n - m).toNat
@@ -54,104 +54,53 @@ theorem IMO2019P1Left :
       grind
     simp at equal_consequent
 
-    have all_equal := EqualAllByConsequent f equal_consequent
+    have all_equal := ArithProgressionDifference f 0 equal_consequent
 
     have: f 0 == 0 := by
       have all_equal_value : ∀n, f n = f 0 := by grind
       have eq := condition_a_b 0 0
-      simp at eq
       simp [all_equal_value] at eq
       grind
     grind
   else
-    let f0 := f 0
-    have induct_on_positive : ∀ n : ℕ, 2 * (f n - f 0) == n * c := by
-      intro n
-      induction n with
-      | zero =>
-        simp
-      | succ m ih =>
-        simp
-        calc
-          2 * (f (↑m + 1) - f 0) = 2 * (f ↑m - f 0) + 2 * (f (↑m + 1) - f ↑m) := by grind
-          _ = ↑m * c + c := by grind
-        grind
-    have induct_on_negative : ∀ n : ℕ, 2 * (f (-n : ℤ) - f 0) == -(n : ℤ) * c := by
-      intro n
-      induction n with
-      | zero =>
-        simp
-      | succ m ih =>
-        simp
-        calc
-          2 * (f (-1 + -↑m) - f 0) = 2 * (f (-↑m) - f 0) + 2 * (f (-1 + -↑m) - f (-↑m)) := by grind
-          _ = _ := by grind
-
-
-    have final : ∀ z, 2 * (f z - f 0) == z * c := by
-      intro z
-      if hh : z >= 0 then
-        let a'''' := z.toNat_of_nonneg hh
-        grind
-      else
-        simp at hh
-        let a'''' := (-z).toNat_of_nonneg
-        grind
-    have f20 : c % 2 == 0 := by
-      simp at c
-      have f2 : 2 * (f 2 - f 0) == ↑2 * c := by grind
-      have f2' : f 2 - f 0 == c := by grind
+    have equal_difference : ∀b, f (b + 1) - f b = (c / 2) := by
       grind
-    have differ : ∀z, f (z + 1) - f z == c / 2 := by grind
-    have final' : ∀ z, f z == z * (c / 2) + f0 := by grind
-    simp at final'
-    rw [final'] at condition_0_b
-    specialize condition_0_b 1
-    simp at condition_0_b
-    let h : f 1 == c / 2 + f0 := by grind
-    have smp : f0 + 2 * (c / 2 + f0) == f ( (c / 2 + f0) ) := by grind
-    have smp': f0 + 2 * (c / 2 + f0) == (c / 2 + f0) * (c / 2) + f0 := by grind
-
-    simp at smp'
-    have smp'' : 2 * (c / 2 + f0) = (c / 2 + f0) * (c / 2) := by grind
-    have smp''' : ((c / 2 + f0)) * (c / 2 - 2) == 0 := by grind
-
-    simp at smp'''
-    cases h : smp'''
-    have q₁ : f 1 - f 0 == c / 2 := by grind
-    have q₂ : f 2 + f 0  == 0 := by grind
-    have q₃ : f 2 - f 1 == c / 2 := by grind
-
-    have q₄ : f 2 == c / 2 := by grind
-    have q₅ : f 0 == -c / 2 := by grind
-    have q₆ : f 1 == 0 := by grind
-
-
-    specialize condition_a_b 1 1
-    simp at condition_a_b
-    simp at q₄ q₅ q₆
-    rw [q₄, q₆] at condition_a_b
-    simp at condition_a_b
-
-    have pls : c / 2 == (c / 2) * (c / 2) + (-c / 2) := by grind
-    have pls' : c == (c / 2) ^ 2 := by grind
-    have pls'' : 4 * c == c ^ 2 := by grind
-    have pls''' : c * (4 - c) == 0 := by grind
-
-    simp at pls'''
-    cases pls'''
-    . grind
-    .
-      have rrr : ∀z, f z = z * 2 + f0 := by grind
-      right
-      use f0
+    have equlity : ∀n, (f n - f 0) == n * (c / 2) := by
+      simp
+      have := ArithProgressionDifference f (c / 2) equal_difference 0
       grind
 
-    have tle : c == 4 := by grind
-    have rrr : ∀z, f z = z * 2 + f0 := by grind
-    right
-    use f0
-    grind
+    have condition : ((c / 2 + f 0)) * (c / 2 - 2) == 0 := by grind
+
+    simp at condition
+    cases condition with
+    | inl _ =>
+      have q₁ : f 2 == c / 2 := by grind
+      have q₂ : f 0 == -c / 2 := by grind
+      have q₃ : f 1 == 0 := by grind
+
+      simp at q₁ q₂ q₃
+
+      specialize condition_a_b 1 1
+      simp at condition_a_b
+      rw [q₁, q₃] at condition_a_b
+      simp at condition_a_b
+
+      have condition_on_c : c * (4 - c) == 0 := by grind
+
+      simp at condition_on_c
+      cases condition_on_c with
+      | inl _ =>
+        left
+        grind
+      | inr _ =>
+        right
+        use f 0
+        grind
+    | _ =>
+        right
+        use f 0
+        grind
 
 theorem IMO2019P1:
     ∀ (f : ℤ → ℤ),
