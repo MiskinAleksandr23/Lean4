@@ -105,9 +105,5 @@ theorem IMO2019P1Left :
 theorem IMO2019P1:
     ∀ (f : ℤ → ℤ),
       (∀ x, f x = 0) ∨ (∃ c : ℤ, ∀ x, f x = 2 * x + c) ↔
-      (∀ a b : ℤ, f (2 * a) + 2 * f b = f (f (a + b))) := by
-      intro f
-      constructor
-      . exact fun a _ b => IMO2019P1Right f a _ b
-      . exact fun a => IMO2019P1Left f a
+      (∀ a b : ℤ, f (2 * a) + 2 * f b = f (f (a + b))) := fun f => ⟨IMO2019P1Right f, IMO2019P1Left f⟩
 -- #min_imports
