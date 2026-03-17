@@ -12,16 +12,16 @@ theorem ArithProgressionDifference :
   ->
   ∀m, ∀n, f n - f m = (n - m) * c := by
     intro f c equal_consequent
-    have all_equal_lemma : ∀m : ℤ, ∀ xd : ℕ, f (m + xd) == f m + c * xd := by
+    have difference_lemma : ∀m : ℤ, ∀ xd : ℕ, f (m + xd) == f m + c * xd := by
         intro m xd
         induction xd with
           | _ => grind
     intro n m
     if n >= m then
-      specialize all_equal_lemma m (n - m).toNat
+      specialize difference_lemma m (n - m).toNat
       grind
     else
-      specialize all_equal_lemma n (m - n).toNat
+      specialize difference_lemma n (m - n).toNat
       grind
 
 theorem imo2019p1left :
