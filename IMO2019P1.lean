@@ -2,6 +2,26 @@ import Mathlib.Algebra.CharP.Defs
 import Mathlib.Analysis.Normed.Ring.Lemmas
 
 
+theorem EqualAllByConsequent :
+  ∀ (f : ℤ -> ℤ),
+  (∀b : ℤ, f (b + 1) - f b = 0)
+  ->
+  ∀m, ∀n, f n = f m := by
+    intro f equal_consequent
+    have all_equal_lemma : ∀m : ℤ, ∀ xd : ℕ, f (m + xd) == f m := by
+        intro m xd
+        induction xd with
+          | zero => grind
+          | succ m =>
+            grind
+    intro n m
+    if n >= m then
+      specialize all_equal_lemma m (n - m).toNat
+      grind
+    else
+      specialize all_equal_lemma n (m - n).toNat
+      grind
+
 theorem IMO2019P1Right :
     ∀ (f : ℤ → ℤ),
       (∀ x, f x = 0) ∨ (∃ c : ℤ, ∀ x, f x = 2 * x + c) →
@@ -29,43 +49,21 @@ theorem IMO2019P1Left :
   have diff : ∀ b, 2 * (f (b + 1) - f (b)) == (f 2) - (f 0) := by grind
 
   let c := f 2 - f 0
-  match h : c with
-  | 0 =>
-    have all_equal : ∀b, f (b + 1) - f b == 0 := by
+  if c == 0 then
+    have equal_consequent : ∀b, f (b + 1) - f b = 0 := by
       grind
-    simp at all_equal
-    have all_equal' : ∀m, ∀n, f n == f m := by
-      have all_equal'' : ∀m : ℤ, ∀ xd : ℕ, f (m + xd) == f m := by
-        intro m xd
-        induction xd with
-          | zero => grind
-          | succ m =>
-            grind
-      intro n m
-      if n >= m then
-        let add' := n - m
-        have positive : add' >= 0 := by grind
-        let add'' := add'.toNat_of_nonneg positive
-        specialize all_equal'' m add'.toNat
-        grind
-      else
-        let add' := m - n
-        have positive : add' >= 0 := by grind
-        let add'' := add'.toNat_of_nonneg positive
-        specialize all_equal'' n add'.toNat
-        grind
-    have f0 : f 0 == 0 := by
-      let value := f 0
-      have all_equal_value : ∀n, f n = value := by grind
+    simp at equal_consequent
+
+    have all_equal := EqualAllByConsequent f equal_consequent
+
+    have: f 0 == 0 := by
+      have all_equal_value : ∀n, f n = f 0 := by grind
       have eq := condition_a_b 0 0
       simp at eq
       simp [all_equal_value] at eq
       grind
-    specialize all_equal' 0
-    simp at all_equal'
-    simp at f0
     grind
-  | a =>
+  else
     let f0 := f 0
     have induct_on_positive : ∀ n : ℕ, 2 * (f n - f 0) == n * c := by
       intro n
