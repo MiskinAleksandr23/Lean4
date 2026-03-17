@@ -1,7 +1,9 @@
 import Mathlib.Analysis.Normed.Ring.Lemmas
 
 
--- IMO 2019 P1
+-- imo 2019 P1
+-- https://artofproblemsolving.com/wiki/index.php/2019_IMO_Problems?srsltid=AfmBOorb3My9yNkaUrUncV3hQo0xhMC2Fkde4ZRX_GQJJ97FBWc6MdBe
+
 -- Let ℤ be the set of integers. Determine all functions f : ℤ -> ℤ such that, for all integers a and b, f(2a)+2f(b)=f(f(a+b))
 
 theorem ArithProgressionDifference :
@@ -22,7 +24,7 @@ theorem ArithProgressionDifference :
       specialize all_equal_lemma n (m - n).toNat
       grind
 
-theorem IMO2019P1Right :
+theorem imo2019p1left :
     ∀ (f : ℤ → ℤ),
       (∀ x, f x = 0) ∨ (∃ c : ℤ, ∀ x, f x = 2 * x + c) →
       (∀ a b : ℤ, f (2 * a) + 2 * f b = f (f (a + b))) := by
@@ -31,7 +33,7 @@ theorem IMO2019P1Right :
       . simp [hc]
         lia
 
-theorem IMO2019P1Left :
+theorem imo2019p1right :
     ∀ (f : ℤ → ℤ),
       (∀ a b : ℤ, f (2 * a) + 2 * f b = f (f (a + b))) →
       (∀ x, f x = 0) ∨ (∃ c : ℤ, ∀ x, f x = 2 * x + c) := by
@@ -102,8 +104,8 @@ theorem IMO2019P1Left :
         use f 0
         grind
 
-theorem IMO2019P1:
+theorem imo2019p1:
     ∀ (f : ℤ → ℤ),
       (∀ x, f x = 0) ∨ (∃ c : ℤ, ∀ x, f x = 2 * x + c) ↔
-      (∀ a b : ℤ, f (2 * a) + 2 * f b = f (f (a + b))) := fun f => ⟨IMO2019P1Right f, IMO2019P1Left f⟩
+      (∀ a b : ℤ, f (2 * a) + 2 * f b = f (f (a + b))) := fun f => ⟨imo2019p1left f, imo2019p1right f⟩
 -- #min_imports
